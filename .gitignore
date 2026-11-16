@@ -9,3 +9,6 @@ data/
 out/
 Thumbs.db
 .DS_Store
+node_modules/
+screenshots/
+package-lock.json

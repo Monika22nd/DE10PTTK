@@ -3,7 +3,7 @@ plugins {
     war
 }
 
-group = "com.example.supermarket"
+group = "supermarket6"
 version = "1.0.0"
 
 repositories { mavenCentral() }
@@ -28,7 +28,7 @@ tasks.test { useJUnitPlatform() }
 
 tasks.register<JavaExec>("runLocal") {
     dependsOn(tasks.war)
-    mainClass.set("com.example.supermarket.DevServer")
+    mainClass.set("app.DevServer6")
     classpath = sourceSets.main.get().runtimeClasspath + devTomcat
     args(tasks.war.get().archiveFile.get().asFile.absolutePath)
 }
