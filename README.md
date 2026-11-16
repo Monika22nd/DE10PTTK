@@ -5,23 +5,41 @@ Web Java (JSP/Servlet, mô hình MVC trên Jakarta EE / Tomcat 10.1) cài đặt
 1. **Register as Member 6** — khách hàng chọn *Đăng ký thành viên* → nhập thông tin → nhấn *Thêm* → hệ thống kiểm tra và lưu vào CSDL.
 2. **View Item Statistics by Revenue 6** — nhân viên quản lý chọn *Xem báo cáo thống kê* → *Thống kê mặt hàng theo doanh thu* → chọn ngày bắt đầu, ngày kết thúc → xem danh sách → nhấn một mặt hàng để xem chi tiết và danh sách giao dịch liên quan.
 
-## Cấu trúc project (theo giáo trình: model – dao – view, thêm controller cho MVC)
+## Cấu trúc project (model – dao – controller – view)
 
+```text
+DE10PTTK/
+├── .github/workflows/build.yml       # CI: kiểm thử, WAR, ảnh giao diện
+├── build.gradle.kts                   # Cấu hình Gradle và runLocal
+├── gradlew / gradlew.bat              # Gradle wrapper
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   ├── app/DevServer6.java    # Tomcat nhúng
+│   │   │   ├── controller/           # Servlet, kiểm tra phiên và biểu mẫu
+│   │   │   │   ├── MemberRegistrationServlet6.java
+│   │   │   │   ├── ItemStatisticsServlet6.java
+│   │   │   │   ├── LoginServlet6.java / LogoutServlet6.java
+│   │   │   │   └── HomeServlet6.java / ManagerHomeServlet6.java / WebUtil6.java
+│   │   │   ├── dao/                  # JDBC, giao dịch và truy vấn
+│   │   │   │   ├── CustomerDAO6.java / UserDAO6.java
+│   │   │   │   ├── ItemStatisticsDAO6.java / TransactionDAO6.java
+│   │   │   │   └── DAO6.java / Database6.java
+│   │   │   └── model/                # User6, Customer6, Item6, Transaction6,
+│   │   │                             # ItemStatistics6 và các lớp liên quan
+│   │   ├── resources/schema.sql      # 12 bảng CSDL và các khóa ngoại
+│   │   └── webapp/
+│   │       ├── assets/               # CSS
+│   │       ├── index.jsp
+│   │       └── WEB-INF/
+│   │           ├── view/             # 8 trang JSP + header/footer
+│   │           └── web.xml           # Ánh xạ Servlet và URL
+│   └── test/java/dao/                # 4 nhóm kiểm thử JUnit, 17 bài test
+└── tools/screenshots.js              # Chụp giao diện trong CI
 ```
-src/main/java/
-  model/       Lớp thực thể: User6, Customer6, Employee6, ManagementStaff6, ..., Item6, ItemCategory6,
-               Transaction6, TransactionDetail6, CounterSale6, OnlineOrder6, GoodsReceipt6, Delivery6,
-               ItemStatistics6 (kế thừa Item6)
-  dao/         DAO6 (lớp gốc giữ Connection), UserDAO6, CustomerDAO6, ItemStatisticsDAO6, TransactionDAO6,
-               Database6 (kết nối, tạo bảng, dữ liệu mẫu)
-  controller/  Servlet (Controller): HomeServlet6, LoginServlet6, LogoutServlet6, MemberRegistrationServlet6,
-               ManagerHomeServlet6, ItemStatisticsServlet6, AppContextListener6, WebUtil6
-  app/         DevServer6 (Tomcat nhúng để chạy thử)
-src/main/webapp/WEB-INF/view/   gdHome6.jsp, gdLogin6.jsp, gdMemberRegistration6.jsp, gdRegistrationSuccess6.jsp,
-                                gdManagerHome6.jsp, gdStatisticsMenu6.jsp, gdItemStatistics6.jsp, gdItemDetail6.jsp
-src/main/resources/schema.sql   CSDL toàn hệ thống (12 bảng tbl...6)
-src/test/java/dao/              Kiểm thử đơn vị JUnit 5 cho từng lớp DAO
-```
+
+`ItemStatistics6` là kết quả truy vấn kế thừa `Item6`, **không có bảng thống kê riêng**.
+Mã triển khai lưu tài khoản và hồ sơ trong `tblUser6` và `tblCustomer6`, **không có** `AccountDAO6`, `RegistrationService6` hoặc `UnitOfWork6` riêng. Giao dịch đăng ký nằm trong `CustomerDAO6`.
 
 ## Chạy thử
 
@@ -43,6 +61,18 @@ Dữ liệu mẫu có 1 phiếu nhập (không tính doanh thu), 2 hóa đơn t�
 
 Kiểm thử và đóng gói: `bash gradlew clean test war` → `build/libs/*.war` (triển khai lên Tomcat 10.1).
 Muốn dùng MySQL: thêm driver MySQL vào `build.gradle.kts` và đặt biến môi trường `SUPERMARKET_DB_URL`.
+
+Nếu project nằm trong đường dẫn Windows có dấu tiếng Việt và `gradlew.bat`/JUnit báo lỗi classpath, ánh xạ tạm thư mục sang ổ đĩa có đường dẫn ASCII (chọn ký tự ổ còn trống):
+
+```powershell
+subst X: 'C:\duong-dan-den-project\DE10PTTK'
+Set-Location X:\
+& 'C:\Program Files\Java\jdk-21\bin\java.exe' -classpath '.\gradle\wrapper\gradle-wrapper.jar' org.gradle.wrapper.GradleWrapperMain clean test war
+Set-Location C:\
+subst X: /D
+```
+
+Thay `C:\duong-dan-den-project\DE10PTTK` bằng đường dẫn thật. Chỉ gỡ ổ `X:` sau khi đã rời thư mục đó. Cách đơn giản hơn là sao chép project vào một đường dẫn không dấu trước khi chạy.
 
 ## Quy tắc nghiệp vụ đã cài đặt
 
