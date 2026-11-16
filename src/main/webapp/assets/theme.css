@@ -1,0 +1,18 @@
+/* Palette shared with the Excel interface mockups in the design report. */
+:root {
+  --ink: #172b4d;
+  --muted: #60718b;
+  --green: #1769aa;
+  --green2: #e8f2fc;
+  --line: #d8e1eb;
+  --bg: #f3f6fa;
+  --red: #b43d3d;
+}
+
+.hero-card {
+  background: linear-gradient(155deg, #17324f, #1769aa);
+}
+
+.button.primary:hover {
+  background: #13598f;
+}
