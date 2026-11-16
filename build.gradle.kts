@@ -24,7 +24,10 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
 }
 
-tasks.test { useJUnitPlatform() }
+tasks.test {
+    useJUnitPlatform()
+    testLogging { events("passed", "skipped", "failed") }
+}
 
 tasks.register<JavaExec>("runLocal") {
     dependsOn(tasks.war)
